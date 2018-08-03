@@ -59,10 +59,14 @@ Example Playbook
 
 ```how to```
 
->   hosts: Tag_Name_jenkins
->   become: yes
->   roles:
->     - jenkins
+
+```sh
+hosts: Tag_Name_jenkins
+become: yes
+roles:
+  - jenkins
+
+```
 
 Author Information
 ------------------
