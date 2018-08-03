@@ -59,14 +59,14 @@ Example Playbook
 
 ```how to```
 
-- hosts: Tag_Name_jenkins
-  become: yes
-  roles:
-    - jenkins
+> - hosts: Tag_Name_jenkins
+>   become: yes
+>   roles:
+>     - jenkins
 
 Author Information
 ------------------
 
-Yashvinder Hooda
-yashvinder.hooda@opstree.com
+- Yashvinder Hooda
+- yashvinder.hooda@opstree.com
 
