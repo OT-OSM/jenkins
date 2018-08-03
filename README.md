@@ -27,7 +27,7 @@ Requirements
 Role Variables
 --------------
 
-- jenkins username and password {change them for your installation}
+# jenkins username and password {change them for your installation}
 * jenkins_admin_username: admin
 * jenkins_admin_password: admin
 
@@ -46,8 +46,8 @@ Role Variables
 * jenkins_plugin_timeout: 300
 * jenkins_plugins_install_dependencies: yes
 
-jenkins_process_user: jenkins
-jenkins_process_group: "{{ jenkins_process_user }}"
+* jenkins_process_user: jenkins
+* jenkins_process_group: "{{ jenkins_process_user }}"
 
 Dependencies
 ------------
