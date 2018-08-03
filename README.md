@@ -59,7 +59,7 @@ Example Playbook
 
 ```how to```
 
-> - hosts: Tag_Name_jenkins
+>   hosts: Tag_Name_jenkins
 >   become: yes
 >   roles:
 >     - jenkins
