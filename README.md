@@ -68,6 +68,10 @@ roles:
 
 ```
 
+Plugins
+-------
+* By default it will install 'git' but you may pass more plugins in the list in defualts/main.yml playbook 
+
 Author Information
 ------------------
 
