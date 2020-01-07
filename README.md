@@ -3,11 +3,10 @@ Role Name
 
 This ROLE will install jenkins server 
 - Supported Distributions
-  * Redhat7
-  * AmazonAMI 2
-  * Ubuntu16
-
-```I am working on to make this role work on ubuntu14 and redhat/centos verison 6, will update you guys once this is done ```
+  * RedHat:7
+  * RedHat:6
+  * Ubuntu:bionic
+  * Ubuntu:xenial
 
 Jenkins Versions
 =========
@@ -54,17 +53,26 @@ Dependencies
 
 - Java {version 8 preferred}
 
+Inventory
+----------
+An inventory should look like this for galera cluster:-
+```ini
+[jenkinshost]                 
+192.168.1.198    ansible_user=ubuntu   
+192.168.3.201    ansible_user=opstree 
+```
+
 Example Playbook
 ----------------
 
-```how to```
-
+* Here is an example playbook:-
 
 ```sh
-hosts: Tag_Name_jenkins
-become: yes
-roles:
-  - jenkins
+---
+- hosts: jenkinshost
+  become: yes
+  roles:
+    - jenkins
 
 ```
 * ansible-playbook site.yml --vault-password-file vault_secret.sh
@@ -81,4 +89,3 @@ Author Information
 
 - Yashvinder Hooda
 - yashvinder.hooda@opstree.com
-

@@ -5,7 +5,6 @@ driver:
   name: docker
 lint:
   name: yamllint
-  enabled: False
 platforms:
   - name: centos
     image: centos:6
@@ -15,7 +14,6 @@ provisioner:
   name: ansible
   lint:
     name: ansible-lint
-    enabled: False
 verifier:
   name: testinfra
   lint:
