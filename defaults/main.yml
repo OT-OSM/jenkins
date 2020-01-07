@@ -10,19 +10,21 @@ jenkins_http_port: 8080
 jenkins_jar_location: /opt/jenkins-cli.jar
 jenkins_url_prefix: ""
 jenkins_java_options: "-Djenkins.install.runSetupWizard=false"
+jenkins_base_url: "http://{{ jenkins_hostname }}:{{ jenkins_http_port }}"
+jenkins_url: "{{ jenkins_base_url }}{{ jenkins_url_prefix }}"
 
-jenkins_plugins: ['git']
+jenkins_plugins:
+   - git
 jenkins_plugins_state: present
 jenkins_plugin_updates_expiration: 86400
 jenkins_plugin_timeout: 300
-jenkins_plugins_install_dependencies: yes
+jenkins_plugins_install_dependencies: true
 
 jenkins_process_user: jenkins
 jenkins_process_group: "{{ jenkins_process_user }}"
 
 jenkins_init_changes:
-  - option: "JENKINS_ARGS"
-    value: "--prefix={{ jenkins_url_prefix }}"
-  - option: "{{ jenkins_java_options_env_var }}"
-    value: "{{ jenkins_java_options }}"
-
+   - option: "JENKINS_ARGS"
+     value: "--prefix={{ jenkins_url_prefix }}"
+   - option: "{{ jenkins_java_options_env_var }}"
+     value: "{{ jenkins_java_options }}"
