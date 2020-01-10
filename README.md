@@ -49,7 +49,7 @@ Role Variables
 | jenkins_http_port | 8080 | Port on which Jenkins runs|
 | jenkins_jar_location | /opt/jenkins-cli.jar | Location where jar file for jenkins stores|
 | jenkins_url_prefix | ""| URL prefix used in jenkins url|
-| jenkins_java_options | "-Djenkins.install.runSetupWizard=false" | |
+| jenkins_java_options | "-Djenkins.install.runSetupWizard=false" | Set java options|
 | jenkins_plugins| ['git']| Plugins add in Jenkins|
 | jenkins_plugins_state | present | Jenkins plugin state|
 | jenkins_plugin_updates_expiration | 86400 | Number of seconds after which a new copy of the update-center.json file is downloaded|
