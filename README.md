@@ -37,7 +37,8 @@ Requirements
 Role Variables
 --------------
 
-**jenkins username and password {change them for your installation}**
+*jenkins username and password {change them for your installation}*
+
 |**Variables**| **Default Values**| **Description**|
 |----------|---------|---------------|
 | jenkins_admin_username | admin | Username of Admin |
