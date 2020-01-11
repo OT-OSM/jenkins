@@ -85,6 +85,8 @@ Example Playbook
 **After the successful installation of jenkins, browse through the jenkins url and you would get your login page**
 ![login](./media/login.png)
 
+Future Proposed Changes
+-----------------------
 
 References
 ----------
