@@ -1,6 +1,6 @@
 Ansible Role: osm_jenkins
 =========
-This ansible role will install and configure jenkins server.
+An ansible role to install and configure jenkins server.
 
 Version History
 ---------------
@@ -20,15 +20,16 @@ Supported OS
   * Ubuntu:bionic
   * Ubuntu:xenial
 
+Dependencies
+------------
+* Java {version 8 preferred}
+
 Requirements
 ------------
-```ini
-* Java {version 8 preferred}
 * curl
 * libselinux-python
 * initscripts
 * apt-transport-https
-```
 
 Role Variables
 --------------
