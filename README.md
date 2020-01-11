@@ -82,12 +82,7 @@ Example Playbook
 
 * Password for decrypting vars/adminpass.yml for this role is: OcCeybCiWist3
 
-Plugins
--------
-* By default it will install 'git' but you may pass more plugins in the list in defualts/main.yml playbook 
-
 **After the successful installation of jenkins, browse through the jenkins url and you would get your login page**
-
 ![login](./media/login.png)
 
 
