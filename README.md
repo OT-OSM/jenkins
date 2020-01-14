@@ -57,7 +57,7 @@ Role Variables
 
 Inventory
 ----------
-An inventory should look like this for galera cluster:-
+An inventory should look like this:-
 ```ini
 [jenkinshost]                 
 192.168.1.198    ansible_user=ubuntu   
