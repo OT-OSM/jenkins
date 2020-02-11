@@ -95,5 +95,5 @@ References
 Author Information
 ------------------
 
-- Yashvinder Hooda
-- yashvinder.hooda@opstree.com
+- **[Yashvinder Hooda](mailto:yashvinder.hooda@opstree.com)*
+- **[Jeff Geerling](mailto:)*
