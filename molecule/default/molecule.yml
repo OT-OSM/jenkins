@@ -12,6 +12,8 @@ platforms:
     image: ubuntu
 provisioner:
   name: ansible
+  connection_options:
+    ask-vault-pass: OcCeybCiWist3
   lint:
     name: ansible-lint
 verifier:
