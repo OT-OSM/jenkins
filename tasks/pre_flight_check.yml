@@ -1,0 +1,9 @@
+---
+- name: Include system variables
+  include_vars: system.yml
+
+- name: Setting up of jenkins
+  fail:
+    msg: "Remote server specification is not per the requirements mentioned, can't execute role"
+  when:  ( ansible_memtotal_mb < 0.85*memory ) or ( ansible_processor_count < core )
+
