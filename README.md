@@ -11,7 +11,7 @@ Version History
 
 Salient Features
 ----------------
-* This role will fetch and install latest jenkins version available in repository but if you want to install a specific veriosn you may pass it in variables. 
+* This role will check the system requirement(like memory and cpu cores) of remote host and if system requirements are satisfied then it will install latest jenkins version available in repository but if you want to install a specific veriosn you may pass it in variables. 
 
 Supported OS
 ------------
@@ -36,6 +36,8 @@ Role Variables
 
 |**Variables**| **Default Values**| **Description**|
 |----------|---------|---------------|
+| memory | 1000 | total memory(in mb) that should be present at remote host|
+| core | 1 | total number of cores that should be present at remote host|
 | jenkins_admin_username | admin | Username of Admin |
 | jenkins_admin_password | admin | Password for Admin user|
 | jenkins_connection_delay | 5 | Wait for Jenkins to start up before proceeding |
