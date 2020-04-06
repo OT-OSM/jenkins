@@ -78,9 +78,6 @@ Example Playbook
 
 ```
 * ansible-playbook site.yml --vault-password-file vault_secret.sh
-> vault_secret.sh is a simple script with single echo statement as: echo $password, where $password will be used to decrypt variables file: vars/adminpass.yml containing jenkins admin user login credentials.
-
-* Password for decrypting vars/adminpass.yml for this role is: OcCeybCiWist3
 
 **After the successful installation of jenkins, browse through the jenkins url and you would get your login page**
 ![login](./media/login.png)
