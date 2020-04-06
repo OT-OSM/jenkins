@@ -4,7 +4,7 @@ dependency:
 driver:
   name: docker
 lint: |
-        yamllint .
+  yamllint .
 platforms:
   - name: centos
     image: centos:6
@@ -20,3 +20,18 @@ verifier:
   name: testinfra
   lint:
     name: flake8
+scenario:
+  name: default
+  test_sequence:        # molecule test
+    - lint
+    - cleanup
+    - destroy
+    - dependency
+    - syntax
+    - create
+    - prepare
+    - converge
+    - side_effect
+    - verify
+    - cleanup
+    - destroy
