@@ -1,25 +1,24 @@
 ---
+image: docker:latest
 
-image: registry.gitlab.com/oosm/osm_nginx/molecule:v.1
+services:
+  - docker:dind
 
-stages:
-  - test
-
-variables:
-  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.pip"
-
-cache:
-  paths:
-    - .pip/
-    - virtenv/
+before_script:
+  - apk update && apk add --no-cache
+    python3-dev py3-pip gcc git curl build-base
+    autoconf automake py3-cryptography linux-headers
+    musl-dev libffi-dev openssl-dev openssh
+  - docker info
+  - python3 --version
+  - python3 -m pip install ansible molecule[docker]
+  - python3 -m pip install pytest testinfra
+  - ansible --version
+  - molecule --version
 
 molecule:
   stage: test
-  services:
-    - docker:dind
   script:
-    - pip install docker
-    - pip install ansible molecule
     - ansible --version
     - molecule --version
-    - molecule --debug test
+    - molecule test

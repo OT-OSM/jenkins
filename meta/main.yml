@@ -17,10 +17,8 @@ galaxy_info:
         - bionic
         - xenial
 
-    - name: Amazon-AMI
-      versions:
-        - 2
   galaxy_tags:
     - jenkins
 
-dependencies: []
+dependencies:
+  - opstree_devops.java
