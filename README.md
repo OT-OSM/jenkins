@@ -79,7 +79,7 @@ Example Playbook
     - jenkins
 
 ```
-* ansible-playbook site.yml --vault-password-file vault_secret.sh
+* ansible-playbook site.yml
 
 **After the successful installation of jenkins, browse through the jenkins url and you would get your login page**
 ![login](./media/login.png)
