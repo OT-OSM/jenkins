@@ -73,6 +73,6 @@ def test_jenkins_cli(host):
 
 
 def test_plugins(host):
-    plugin_name = host.file('/var/lib/jenkins/plugins/*')
+    plugin_check = host.run('/var/lib/jenkins/plugins/*')
 
-    assert plugin_name.exists
+    assert plugin_check.succeeded
