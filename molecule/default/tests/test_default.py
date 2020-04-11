@@ -73,6 +73,6 @@ def test_jenkins_cli(host):
 
 
 def test_plugins(host):
-    plugin_name = host.file('/var/lib/jenkins/plugins/git')
+    plugin_name = host.file('/var/lib/jenkins/plugins/git*')
 
-    assert plugin_name.is_directory
+    assert plugin_name.exists
