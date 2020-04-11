@@ -70,9 +70,3 @@ def test_jenkins_cli(host):
     cli = host.file('/opt/jenkins-cli.jar')
 
     assert cli.is_file
-
-
-def test_plugins(host):
-    plugin_check = host.run('/var/lib/jenkins/plugins/*')
-
-    assert plugin_check.succeeded
