@@ -1,7 +1,7 @@
 ---
 # Variable setup.
 
-- name: Include file for remote system configuration 
+- name: Include file for remote system configuration
   include_tasks: pre_flight_check.yml
 
 - name: Include OS-Specific variables
