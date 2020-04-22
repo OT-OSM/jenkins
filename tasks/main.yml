@@ -55,7 +55,7 @@
   check_mode: false
 
 - name: check if jenkins-cli jar file exists
-  stat: 
+  stat:
     path: "{{ jenkins_jar_location }}"
   register: Jenkins_jar_path
 
