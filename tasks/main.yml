@@ -54,6 +54,11 @@
   changed_when: false
   check_mode: false
 
+- name: check if jenkins-cli jar file exists
+  stat:
+    path: "{{ jenkins_jar_location }}"
+  register: Jenkins_jar_path
+
 - name: Get the jenkins-cli jarfile from the Jenkins server.
   get_url:
     url: "{{ jenkins_url }}/jnlpJars/jenkins-cli.jar"
@@ -63,6 +68,7 @@
   retries: 5
   delay: 10
   check_mode: false
+  when: Jenkins_jar_path.stat.exists == false
 
 - name: Remove Jenkins security init scripts after first startup.
   file:
