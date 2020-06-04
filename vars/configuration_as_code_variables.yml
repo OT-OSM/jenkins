@@ -1,0 +1,10 @@
+credential_list: |
+  credentials:
+    system:
+      domainCredentials:
+      - credentials:
+        - usernamePassword:
+            id: "Testid"
+            password: "password"
+            scope: GLOBAL
+            username: "testUserName"
