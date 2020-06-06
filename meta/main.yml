@@ -20,5 +20,5 @@ galaxy_info:
   galaxy_tags:
     - jenkins
 
-#dependencies:
-#  - opstree_devops.java
+dependencies:
+  - opstree_devops.java
