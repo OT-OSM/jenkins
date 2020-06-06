@@ -1,7 +1,6 @@
 ---
-# Change this to `latest` to update Jenkins if a newer version is available.
+# Change this to -  `latest` to update Jenkins if a newer version is available.
 jenkins_package_state: present
-
 jenkins_connection_delay: 5
 jenkins_connection_retries: 60
 jenkins_home: /var/lib/jenkins
@@ -12,9 +11,126 @@ jenkins_url_prefix: ""
 jenkins_java_options: "-Djenkins.install.runSetupWizard=false"
 jenkins_base_url: "http://{{ jenkins_hostname }}:{{ jenkins_http_port }}"
 jenkins_url: "{{ jenkins_base_url }}{{ jenkins_url_prefix }}"
-
 jenkins_plugins:
-   - git
+  - git
+  - ant
+  - ace-editor
+  - allure-jenkins-plugin
+  - analysis-core
+  - analysis-model-api
+  - antisamy-markup-formatter
+  - apache-httpcomponents-client-4-api
+  - authentication-tokens
+  - bootstrap4-api
+  - bouncycastle-api
+  - branch-api
+  - build-timeout
+  - code-coverage-api
+  - cloudbees-folder
+  - cobertura
+  - command-launcher
+  - conditional-buildstep
+  - config-file-provider
+  - configuration-as-code
+  - credentials-binding
+  - credentials
+  - data-tables-api
+  - description-setter
+  - display-url-api
+  - docker-commons
+  - docker-workflow
+  - dtkit-api
+  - durable-task
+  - echarts-api
+  - email-ext
+  - envinject-api
+  - envinject
+  - findbugs
+  - font-awesome-api
+  - forensics-api
+  - git-client
+  - git-parameter
+  - git-server 
+  - github-api
+  - github-branch-source
+  - github-oauth
+  - github
+  - gitlab-oauth
+  - google-login
+  - gradle
+  - h2-api
+  - handlebars
+  - htmlpublisher
+  - jackson2-api
+  - javadoc
+  - jaxb
+  - jdk-tool
+  - job-dsl
+  - jquery-detached
+  - jquery
+  - jquery3-api
+  - jsch
+  - junit
+  - ldap
+  - lockable-resources
+  - mailer
+  - mapdb-api
+  - mask-passwords
+  - matrix-auth
+  - matrix-project
+  - maven-plugin
+  - momentjs
+  - pam-auth
+  - parameterized-trigger
+  - pipeline-build-step
+  - pipeline-github-lib
+  - pipeline-graph-analysis
+  - pipeline-input-step
+  - pipeline-maven
+  - pipeline-milestone-step
+  - pipeline-model-api
+  - pipeline-model-declarative-agent
+  - pipeline-model-definition
+  - pipeline-model-extensions
+  - pipeline-rest-api
+  - pipeline-stage-step
+  - pipeline-stage-tags-metadata
+  - pipeline-stage-view
+  - pipeline-utility-steps
+  - plain-credentials
+  - plugin-util-api
+  - popper-api
+  - rebuild
+  - report-info
+  - resource-disposer
+  - run-condition
+  - scm-api
+  - script-security
+  - seed
+  - slack
+  - ssh-credentials
+  - ssh-slaves
+  - structs
+  - subversion
+  - thinBackup
+  - timestamper
+  - token-macro
+  - trilead-api
+  - warnings-ng
+  - workflow-aggregator
+  - workflow-api
+  - workflow-basic-steps
+  - workflow-cps-global-lib
+  - workflow-cps
+  - workflow-durable-task-step
+  - workflow-job
+  - workflow-multibranch
+  - workflow-scm-step
+  - workflow-step-api
+  - workflow-support
+  - ws-cleanup
+  - xml-job-to-job-dsl
+  - xunit
 jenkins_plugins_state: present
 jenkins_plugin_updates_expiration: 86400
 jenkins_plugin_timeout: 300
