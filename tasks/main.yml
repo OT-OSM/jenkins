@@ -78,4 +78,4 @@
 # Update Jenkins and install configured plugins.
 - include_tasks: plugins.yml
 
-- include_tasks: add_credentials.yml
+- include_tasks: configuration_as_code_task.yml

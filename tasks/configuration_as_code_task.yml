@@ -6,7 +6,7 @@
 
 - name: Adding jenkins configuration as code input file
   template:
-    src: jenkins.add.credentials.yaml.j2
+    src: jenkins_configuration_as_code_template.yaml.j2
     dest: "{{ jenkins_home }}/jenkins.yaml"
     owner: "jenkins"
     group: "jenkins"
