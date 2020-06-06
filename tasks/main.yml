@@ -78,4 +78,6 @@
 # Update Jenkins and install configured plugins.
 - include_tasks: plugins.yml
 
-- include_tasks: configuration_as_code_task.yml
+- name: Including file for managing configuration as code
+  include_tasks: configuration_as_code_task.yml
+  when: configuration_as_code == "enabled"
