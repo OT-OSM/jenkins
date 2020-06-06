@@ -8,10 +8,12 @@ Version History
 |**Date**| **Version**| **Description**| **Changed By** |
 |----------|---------|---------------|-----------------|
 |**June '15** | v.1.0 | Initial Draft | Sudipt Sharma |
+|**June '6** | v.1.1 | Added support for managing global credential | Shivam Tomar |
 
 Salient Features
 ----------------
-* This role will check the system requirement(like memory and cpu cores) of remote host and if system requirements are satisfied then it will install latest jenkins version available in repository but if you want to install a specific veriosn you may pass it in variables. 
+* This role will check the system requirement(like memory and cpu cores) of remote host and if system requirements are satisfied then it will install latest jenkins version available in repository but if you want to install a specific veriosn you may pass it in variables.
+* This role is configuring jenkins global credentials as a code. To use this feature you just need to set variable as **configuration_as_code="enabled"**
 
 Supported OS
 ------------
@@ -55,7 +57,7 @@ Role Variables
 | jenkins_plugins_install_dependencies | yes | Defines whether to install plugin dependencies. |
 | jenkins_process_user | jenkins | Jenkins process username|
 | jenkins_process_group | "{{ jenkins_process_user }}" | Jenkins process groupname|
-
+| configuration_as_code | "disabled"  | Update its value to "enabled" for managing global credential as a code | 
 
 Inventory
 ----------
