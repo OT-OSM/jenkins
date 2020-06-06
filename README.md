@@ -7,8 +7,8 @@ Version History
 
 |**Date**| **Version**| **Description**| **Changed By** |
 |----------|---------|---------------|-----------------|
-|**June '15** | v.1.0 | Initial Draft | Sudipt Sharma |
-|**June '6** | v.1.1 | Added support for managing global credential | Shivam Tomar |
+|**June '15, 19** | v.1.0 | Initial Draft | Sudipt Sharma |
+|**June '6, 20** | v.1.1 | Added support for managing global credential | Shivam Tomar |
 
 Salient Features
 ----------------
