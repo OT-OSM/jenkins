@@ -68,7 +68,7 @@
   retries: 5
   delay: 10
   check_mode: false
-  when: Jenkins_jar_path.stat.exists == false
+  when: not Jenkins_jar_path.stat.exists
 
 - name: Remove Jenkins security init scripts after first startup.
   file:

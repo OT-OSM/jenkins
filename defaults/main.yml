@@ -50,7 +50,7 @@ jenkins_plugins:
   - forensics-api
   - git-client
   - git-parameter
-  - git-server 
+  - git-server
   - github-api
   - github-branch-source
   - github-oauth
@@ -140,7 +140,7 @@ jenkins_process_user: jenkins
 jenkins_process_group: "{{ jenkins_process_user }}"
 
 jenkins_init_changes:
-   - option: "JENKINS_ARGS"
-     value: "--prefix={{ jenkins_url_prefix }}"
-   - option: "{{ jenkins_java_options_env_var }}"
-     value: "{{ jenkins_java_options }}"
+  - option: "JENKINS_ARGS"
+    value: "--prefix={{ jenkins_url_prefix }}"
+  - option: "{{ jenkins_java_options_env_var }}"
+    value: "{{ jenkins_java_options }}"
