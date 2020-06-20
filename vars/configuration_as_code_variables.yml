@@ -1,0 +1,22 @@
+---
+credential_list: |
+  credentials:
+    system:
+      domainCredentials:
+      - credentials:
+        - usernamePassword:
+            id: "USER_PASS_CREDENTIAL_ID"
+            password: "----REPLACE_WITH_PASSWORD----"
+            scope: GLOBAL
+            username: "----REPLACE_WITH_USERNAME----"
+        - basicSSHUserPrivateKey:
+            id: "SSH_CREDENTIAL_ID"
+            privateKeySource:
+              directEntry:
+                privateKey: "----REPLACE_WITH_PRIVATE_SSH_KEY_CONTENT----"
+            scope: GLOBAL
+            username: "----REPLACE_WITH_USERNAME----"
+        - string:
+            id: "TOKEN_CREDENTIAL_ID"
+            scope: GLOBAL
+            secret: "----REPLACE_WITH_TOKEN_CONTENT----"

@@ -1,0 +1,15 @@
+---
+
+- name: Include variables
+  include_vars:
+    file: configuration_as_code_variables.yml
+
+- name: Adding jenkins configuration as code input file
+  template:
+    src: jenkins_configuration_as_code_template.yaml.j2
+    dest: "{{ jenkins_home }}/jenkins.yaml"
+    owner: "jenkins"
+    group: "jenkins"
+    mode: "0640"
+  notify:
+    - Restart jenkins

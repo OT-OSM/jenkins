@@ -1,7 +1,6 @@
 ---
-# Change this to `latest` to update Jenkins if a newer version is available.
+# Change this to -  `latest` to update Jenkins if a newer version is available.
 jenkins_package_state: present
-
 jenkins_connection_delay: 5
 jenkins_connection_retries: 60
 jenkins_home: /var/lib/jenkins
@@ -13,8 +12,12 @@ jenkins_java_options: "-Djenkins.install.runSetupWizard=false"
 jenkins_base_url: "http://{{ jenkins_hostname }}:{{ jenkins_http_port }}"
 jenkins_url: "{{ jenkins_base_url }}{{ jenkins_url_prefix }}"
 
+configuration_as_code: "disabled"
 jenkins_plugins:
-   - git
+  - git
+  - configuration-as-code
+  - plain-credentials
+
 jenkins_plugins_state: present
 jenkins_plugin_updates_expiration: 86400
 jenkins_plugin_timeout: 300
@@ -24,7 +27,7 @@ jenkins_process_user: jenkins
 jenkins_process_group: "{{ jenkins_process_user }}"
 
 jenkins_init_changes:
-   - option: "JENKINS_ARGS"
-     value: "--prefix={{ jenkins_url_prefix }}"
-   - option: "{{ jenkins_java_options_env_var }}"
-     value: "{{ jenkins_java_options }}"
+  - option: "JENKINS_ARGS"
+    value: "--prefix={{ jenkins_url_prefix }}"
+  - option: "{{ jenkins_java_options_env_var }}"
+    value: "{{ jenkins_java_options }}"
