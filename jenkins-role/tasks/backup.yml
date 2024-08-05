@@ -1,0 +1,13 @@
+---
+- name: Deploy Jenkins backup script
+  copy:
+    src: "{{ jenkins_backup_script }}"
+    dest: "/usr/local/bin/{{ jenkins_backup_script }}"
+    mode: '0755'
+
+- name: Configure Jenkins backup cron job
+  cron:
+    name: "Jenkins backup"
+    minute: "0"
+    hour: "2"
+    job: "/usr/local/bin/{{ jenkins_backup_script }}"

@@ -1,0 +1,19 @@
+---
+- name: Add Jenkins repository
+  apt_repository:
+    repo: "{{ jenkins_repo_url }}"
+    state: present
+
+- name: Install Jenkins and dependencies
+  apt:
+    name:
+      - openjdk-11-jdk
+      - jenkins={{ jenkins_version }}
+    state: present
+    update_cache: yes
+
+- name: Ensure Jenkins is started and enabled
+  service:
+    name: jenkins
+    state: started
+    enabled: yes
