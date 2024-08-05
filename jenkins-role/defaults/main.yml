@@ -1,0 +1,14 @@
+---
+# Default variables for Jenkins installation and configuration
+
+jenkins_version: "2.319.1"
+jenkins_repo_url: "http://pkg.jenkins.io/debian-stable"
+jenkins_user: "jenkins"
+jenkins_backup_dir: "/var/backups/jenkins"
+jenkins_backup_script: "jenkins_backup.sh"
+jenkins_backup_cron: "0 2 * * * /usr/local/bin/jenkins_backup.sh"
+jenkins_users:
+  - username: "user1"
+    password: "password1"
+  - username: "user2"
+    password: "password2"

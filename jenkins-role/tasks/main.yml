@@ -1,0 +1,9 @@
+---
+- name: Install Jenkins
+  include_tasks: install.yml
+
+- name: Configure Jenkins backup
+  include_tasks: backup.yml
+
+- name: Create Jenkins users
+  include_tasks: user.yml

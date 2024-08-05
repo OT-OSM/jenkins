@@ -1,0 +1,18 @@
+---
+- name: Create Jenkins users
+  uri:
+    url: "{{ jenkins_master_url }}/securityRealm/createAccountByAdmin"
+    method: POST
+    user: "admin"
+    password: "admin_password"
+    force_basic_auth: yes
+    body:
+      json:
+        username: "{{ item.username }}"
+        password1: "{{ item.password }}"
+        password2: "{{ item.password }}"
+        fullName: "{{ item.username }}"
+    headers:
+      Content-Type: "application/x-www-form-urlencoded"
+    status_code: 200
+  loop: "{{ jenkins_users }}"

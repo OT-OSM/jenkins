@@ -1,0 +1,6 @@
+---
+# Variables for Jenkins configuration
+
+jenkins_master_url: "http://localhost:8080"
+jenkins_crumb_url: "{{ jenkins_master_url }}/crumbIssuer/api/xml?xpath=concat(//crumbRequestField,\":\",//crumb)"
+
