@@ -40,15 +40,23 @@
   service: name=jenkins state=started enabled=yes
 
 - name: Wait for Jenkins to start up before proceeding.
-  command: "curl -D - --silent --max-time 5 {{ jenkins_url }}/cli/"
-  args:
-    warn: false
+  ansible.builtin.command: "curl -D - --silent --max-time 5 {{ jenkins_url }}/cli/"
   register: result
-  until:
-    (result.stdout.find("403 Forbidden") != -1) or
-    (result.stdout.find("200 OK") != -1) and
-    (result.stdout.find("Please wait while") == -1)
+  retries: "{{ jenkins_connection_retries }}"
+  delay: "{{ jenkins_connection_delay }}"
+  changed_when: false
+  check_mode: false
 
+- name: Debug the result variable
+  debug:
+    var: result
+
+- name: Wait for Jenkins to start up before proceeding (fixed conditional).
+  ansible.builtin.command: "curl -D - --silent --max-time 5 {{ jenkins_url }}/cli/"
+  register: result
+  until: 
+    - "(result.stdout.find('403 Forbidden') != -1) or (result.stdout.find('200 OK') != -1)"
+    - "(result.stdout.find('Please wait while') == -1)"
   retries: "{{ jenkins_connection_retries }}"
   delay: "{{ jenkins_connection_delay }}"
   changed_when: false
