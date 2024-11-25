@@ -1,0 +1,16 @@
+---
+cloud_name: "my-cloud"
+region: "ap-south1"
+ami_id: "sample-ami"
+template_description: "ec2 template for jenkins workers"
+iam_instance_profile: ""
+idle_temination_timeout: 15
+label: ""
+executors: 4
+remote_admin: "ubuntu"
+sg_id: "sg-example"
+subnet_id: "s-id"
+instance_type: "t3.medium"
+minimum_instances: 2
+minimum_spare: 1
+use_instance_profile: true

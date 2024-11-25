@@ -40,7 +40,7 @@
   service: name=jenkins state=started enabled=yes
 
 - name: Wait for Jenkins to start up before proceeding.
-  ansible.builtin.command: "curl -D - --silent --max-time 5 {{ jenkins_url }}/cli/"
+  command: "curl -D - --silent --max-time 5 {{ jenkins_url }}/cli/"
   register: result
   retries: "{{ jenkins_connection_retries }}"
   delay: "{{ jenkins_connection_delay }}"
@@ -52,7 +52,7 @@
     var: result
 
 - name: Wait for Jenkins to start up before proceeding (fixed conditional).
-  ansible.builtin.command: "curl -D - --silent --max-time 5 {{ jenkins_url }}/cli/"
+  command: "curl -D - --silent --max-time 5 {{ jenkins_url }}/cli/"
   register: result
   until: 
     - "(result.stdout.find('403 Forbidden') != -1) or (result.stdout.find('200 OK') != -1)"
@@ -89,3 +89,6 @@
 - name: Including file for managing configuration as code
   include_tasks: configuration_as_code_task.yml
   when: configuration_as_code == "enabled"
+
+- include_tasks: configure_ec2_plugin.yml
+  when: configure_ec2_plugin == "yes"
