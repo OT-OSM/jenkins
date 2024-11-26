@@ -17,7 +17,7 @@
     validate_certs: false 
   
 
-# - name: Clean up the temporary Groovy script file
-#   file:
-#     path: /tmp/ec2-plugin.groovy
-#     state: absent
+- name: Clean up the temporary Groovy script file
+  file:
+    path: /tmp/ec2-plugin.groovy
+    state: absent
