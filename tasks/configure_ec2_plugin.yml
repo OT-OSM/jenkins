@@ -1,0 +1,23 @@
+---
+- name: Include plugin variables
+  include_vars:
+    file: ec2_plugin_vars.yml
+
+- name: Render the Groovy script from template
+  template:
+    src: ec2-plugin.groovy.j2  # Groovy template file on Ansible host
+    dest: /tmp/ec2-plugin.groovy  # Destination on Jenkins host
+
+- name: Execute Groovy script to configure EC2 plugin
+  jenkins_script:
+    script: "{{ lookup('file', '/tmp/ec2-plugin.groovy') }}"
+    user: admin
+    password: admin
+    url: "{{ jenkins_url }}"
+    validate_certs: false 
+  
+
+- name: Clean up the temporary Groovy script file
+  file:
+    path: /tmp/ec2-plugin.groovy
+    state: absent

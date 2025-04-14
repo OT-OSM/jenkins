@@ -5,7 +5,7 @@ jenkins_connection_delay: 5
 jenkins_connection_retries: 60
 jenkins_home: /var/lib/jenkins
 jenkins_hostname: localhost
-jenkins_http_port: 8080
+jenkins_http_port: 8082
 jenkins_jar_location: /opt/jenkins-cli.jar
 jenkins_url_prefix: ""
 jenkins_java_options: "-Djenkins.install.runSetupWizard=false"
@@ -13,10 +13,22 @@ jenkins_base_url: "http://{{ jenkins_hostname }}:{{ jenkins_http_port }}"
 jenkins_url: "{{ jenkins_base_url }}{{ jenkins_url_prefix }}"
 
 configuration_as_code: "disabled"
+configure_ec2_plugin: "yes"
 jenkins_plugins:
   - git
   - configuration-as-code
   - plain-credentials
+  - warnings-ng
+  - htmlpublisher
+  - ntisamy-markup-formatter
+  - Office-365-Connector
+  - ansicolor
+  - sonar
+  - pipeline-aws
+  - build-user-vars-plugin
+  - ws-cleanup
+  - amazon-ec2
+  - ec2
 
 jenkins_plugins_state: present
 jenkins_plugin_updates_expiration: 86400

@@ -1,0 +1,174 @@
+import com.amazonaws.services.ec2.model.InstanceType
+import com.cloudbees.jenkins.plugins.awscredentials.AWSCredentialsImpl
+import com.cloudbees.plugins.credentials.*
+import com.cloudbees.plugins.credentials.domains.Domain
+import hudson.model.*
+import hudson.plugins.ec2.AmazonEC2Cloud
+import hudson.plugins.ec2.AMITypeData
+import hudson.plugins.ec2.EC2Tag
+import hudson.plugins.ec2.SlaveTemplate
+import hudson.plugins.ec2.SpotConfiguration
+import hudson.plugins.ec2.UnixData
+import jenkins.model.Jenkins
+import hudson.plugins.ec2.HostKeyVerificationStrategyEnum
+import hudson.plugins.ec2.ConnectionStrategy
+import hudson.plugins.ec2.Tenancy
+import hudson.plugins.ec2.EbsEncryptRootVolume
+
+def sshPortToConnectWith = '22'
+
+// store parameters
+def slaveTemplateAPSouth1Parameters = [
+  ami:                           '{{ ami_id}}',
+  associatePublicIp:             false,
+  spotConfig:                    null,
+  connectBySSHProcess:           false,
+  connectUsingPublicIp:          false,
+  customDeviceMapping:           '',
+  deleteRootOnTermination:       true,
+  description:                   '{{ template_description }}',
+  ebsOptimized:                  true,
+  iamInstanceProfile:            '{{ iam_instance_profile_arn }}',
+  idleTerminationMinutes:        '{{ idle_temination_timeout }}',
+  initScript:                    '',
+  instanceCapStr:                '2',
+  javaPath:                      'java',
+  jvmopts:                       '',
+  labelString:                   '{{ label }}',
+  launchTimeoutStr:              '',
+  numExecutors:                  '{{ executors }}',
+  unixData:                      new UnixData(null, null, null, sshPortToConnectWith, null),
+  remoteFS:                      '',
+  remoteAdmin:                   '{{ remote_admin }}',
+  tmpDir:                        '',
+  securityGroups:                '{{ sg_id }}',
+  stopOnTerminate:               false,
+  subnetId:                      '{{ subnet_id}}',
+  tags:                          {% for key, value in tags.items() %}
+                                 new EC2Tag('{{ key }}', '{{ value }}'){{ "," if not loop.last }}
+                                 {% endfor %},
+  type:                          '{{ instance_type }}',
+  useDedicatedTenancy:           false,
+  useEphemeralDevices:           false,
+  usePrivateDnsName:             false,
+  userData:                      '',
+  zone:                          '',
+  metadataSupported:             true,
+  metadataEndpointEnabled:       true,
+  metadataTokensRequired:        true, // `true` enforces IMDSv2 only (over IMDSv1), an important AWS security best practice
+  metadataHopsLimit:             1,
+  minimumNumberOfInstances:      {{ minimum_instances }},
+  minimumNumberOfSpareInstances: {{ minimum_spare }},
+  maxTotalUses:                  -1,
+  monitoring:                    false,
+  t2Unlimited:                   false,
+  connectionStrategy:            ConnectionStrategy.valueOf('PRIVATE_IP'),
+  hostKeyVerificationStrategy:   HostKeyVerificationStrategyEnum.valueOf('CHECK_NEW_HARD'),
+  tenancy:                       Tenancy.valueOf('Default'),
+  ebsEncryptRootVolume:          EbsEncryptRootVolume.valueOf('ENCRYPTED'),
+  nodeProperties:                null
+]
+
+def AmazonEC2CloudParameters = [
+  name:      '{{ cloud_name }}',
+  credentialsId:  'jenkins-aws-key',
+  instanceCapStr: '2',
+  privateKey: {{ private_key }},
+  region: '{{ region }}',
+  useInstanceProfileForCredentials: {{ use_instance_profile | string | lower }}
+]
+
+def AWSCredentialsImplParameters = [
+  id:           'jenkins-aws-key',
+  description:  'Jenkins AWS IAM key',
+  accessKey:    '01234567890123456789',
+  secretKey:    '01345645657987987987987987987987987987'
+]
+
+// https://github.com/jenkinsci/aws-credentials-plugin/blob/aws-credentials-1.23/src/main/java/com/cloudbees/jenkins/plugins/awscredentials/AWSCredentialsImpl.java
+AWSCredentialsImpl aWSCredentialsImpl = new AWSCredentialsImpl(
+  CredentialsScope.GLOBAL,
+  AWSCredentialsImplParameters.id,
+  AWSCredentialsImplParameters.accessKey,
+  AWSCredentialsImplParameters.secretKey,
+  AWSCredentialsImplParameters.description
+)
+
+// https://javadoc.jenkins.io/plugin/ec2/hudson/plugins/ec2/SlaveTemplate.html
+SlaveTemplate slaveTemplateAPSouth1 = new SlaveTemplate(
+  slaveTemplateAPSouth1Parameters.ami,
+  slaveTemplateAPSouth1Parameters.zone,
+  slaveTemplateAPSouth1Parameters.spotConfig,
+  slaveTemplateAPSouth1Parameters.securityGroups,
+  slaveTemplateAPSouth1Parameters.remoteFS,
+  InstanceType.fromValue(slaveTemplateAPSouth1Parameters.type),
+  slaveTemplateAPSouth1Parameters.ebsOptimized,
+  slaveTemplateAPSouth1Parameters.labelString,
+  Node.Mode.NORMAL,
+  slaveTemplateAPSouth1Parameters.description,
+  slaveTemplateAPSouth1Parameters.initScript,
+  slaveTemplateAPSouth1Parameters.tmpDir,
+  slaveTemplateAPSouth1Parameters.userData,
+  slaveTemplateAPSouth1Parameters.numExecutors,
+  slaveTemplateAPSouth1Parameters.remoteAdmin,
+  slaveTemplateAPSouth1Parameters.unixData,
+  slaveTemplateAPSouth1Parameters.javaPath,
+  slaveTemplateAPSouth1Parameters.jvmopts,
+  slaveTemplateAPSouth1Parameters.stopOnTerminate,
+  slaveTemplateAPSouth1Parameters.subnetId,
+  [slaveTemplateAPSouth1Parameters.tags],
+  slaveTemplateAPSouth1Parameters.idleTerminationMinutes,
+  slaveTemplateAPSouth1Parameters.minimumNumberOfInstances,
+  slaveTemplateAPSouth1Parameters.minimumNumberOfSpareInstances,
+  slaveTemplateAPSouth1Parameters.instanceCapStr,
+  slaveTemplateAPSouth1Parameters.iamInstanceProfile,
+  slaveTemplateAPSouth1Parameters.deleteRootOnTermination,
+  slaveTemplateAPSouth1Parameters.useEphemeralDevices,
+  slaveTemplateAPSouth1Parameters.launchTimeoutStr,
+  slaveTemplateAPSouth1Parameters.associatePublicIp,
+  slaveTemplateAPSouth1Parameters.customDeviceMapping,
+  slaveTemplateAPSouth1Parameters.connectBySSHProcess,
+  slaveTemplateAPSouth1Parameters.monitoring,
+  slaveTemplateAPSouth1Parameters.t2Unlimited,
+  slaveTemplateAPSouth1Parameters.connectionStrategy,
+  slaveTemplateAPSouth1Parameters.maxTotalUses,
+  slaveTemplateAPSouth1Parameters.nodeProperties,
+  slaveTemplateAPSouth1Parameters.hostKeyVerificationStrategy,
+  slaveTemplateAPSouth1Parameters.tenancy,
+  slaveTemplateAPSouth1Parameters.ebsEncryptRootVolume,
+  slaveTemplateAPSouth1Parameters.metadataSupported,
+  slaveTemplateAPSouth1Parameters.metadataEndpointEnabled,
+  slaveTemplateAPSouth1Parameters.metadataTokensRequired,
+  slaveTemplateAPSouth1Parameters.metadataHopsLimit,
+)
+
+// https://javadoc.jenkins.io/plugin/ec2/index.html?hudson/plugins/ec2/AmazonEC2Cloud.html
+AmazonEC2Cloud amazonEC2Cloud = new AmazonEC2Cloud(
+  AmazonEC2CloudParameters.name,
+  AmazonEC2CloudParameters.useInstanceProfileForCredentials,
+  AmazonEC2CloudParameters.credentialsId,
+  AmazonEC2CloudParameters.region,
+  AmazonEC2CloudParameters.privateKey,
+  AmazonEC2CloudParameters.instanceCapStr,
+  [slaveTemplateAPSouth1],
+  '',
+  ''
+)
+
+// get Jenkins instance
+Jenkins jenkins = Jenkins.getInstance()
+
+// get credentials domain
+def domain = Domain.global()
+
+// get credentials store
+def store = jenkins.getExtensionList('com.cloudbees.plugins.credentials.SystemCredentialsProvider')[0].getStore()
+
+// add credential to store
+store.addCredentials(domain, aWSCredentialsImpl)
+
+// add cloud configuration to Jenkins
+jenkins.clouds.add(amazonEC2Cloud)
+
+// save current Jenkins state to disk
+jenkins.save()
