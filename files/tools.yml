@@ -1,0 +1,18 @@
+tool:
+# https://github.com/jenkinsci/configuration-as-code-plugin/tree/master/demos/git-client#sample-tool-configuration
+  git:
+    installations:
+    - home: "git"
+      name: "Default"
+# https://github.com/jenkinsci/configuration-as-code-plugin/tree/master/demos/maven#automated-tool-installation-on-agents
+  maven:
+    installations:
+      - name: maven3.8
+        properties:
+          - installSource:
+              installers:
+                - maven:
+                    id: "3.8.4"
+  mavenGlobalConfig:
+    globalSettingsProvider: "standard"
+    settingsProvider: "standard"

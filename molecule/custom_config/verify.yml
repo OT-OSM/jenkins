@@ -1,0 +1,60 @@
+---
+- name: Verify Jenkins installation
+  hosts: all
+  vars:
+    jenkins_plugins:
+      - name: pipeline-utility-steps
+        version: 2.19.0
+  tasks:
+    - name: Check if Jenkins is running on port {{ jenkins_http_port }}
+      ansible.builtin.wait_for:
+        port: "{{ jenkins_http_port }}"
+        timeout: 10
+      register: jenkins_port_check
+
+    - name: Assert Jenkins port is open
+      ansible.builtin.assert:
+        that: jenkins_port_check.elapsed < 10
+        fail_msg: "Jenkins is not responding on port {{ jenkins_http_port }}"
+        success_msg: "Jenkins is listening on port {{ jenkins_http_port }}"
+
+    - name: Ensure Jenkins is running
+      ansible.builtin.uri:
+        url: "http://127.0.0.1:{{ jenkins_http_port }}{{ jenkins_url_prefix }}/login"
+        status_code: 200
+
+    - name: Check installed version of Jenkins.
+      ansible.builtin.command: jenkins --version
+      changed_when: false
+      register: jenkins_rpm_version
+
+    - name: Assert correct Jenkins version is installed
+      ansible.builtin.assert:
+        that:
+          - "'{{ jenkins_version }}' in jenkins_rpm_version.stdout"
+        fail_msg: "Expected Jenkins version '{{ jenkins_version }}' not found. Output: {{ jenkins_rpm_version.stdout }}"
+        success_msg: "Jenkins version {{ jenkins_version }} is installed"
+
+    - name: Check if Jenkins CLI JAR exists
+      ansible.builtin.stat:
+        path: "{{ jenkins_jar_location }}"
+      register: cli_jar_file
+
+    - name: Assert Jenkins CLI JAR is present
+      ansible.builtin.assert:
+        that: cli_jar_file.stat.exists
+        fail_msg: "Jenkins CLI jar not found at {{ jenkins_jar_location }}"
+        success_msg: "Jenkins CLI jar is present"
+
+    - name: Check if expected plugins are present in plugins directory
+      ansible.builtin.stat:
+        path: "/var/lib/jenkins/plugins/{{ item.name }}.jpi"
+      with_items: "{{ jenkins_plugins }}"
+      register: plugin_files
+
+    - name: Assert all plugin files are present
+      ansible.builtin.assert:
+        that:
+          - plugin_files.results | selectattr('stat.exists', 'equalto', true) | list | length == jenkins_plugins | length
+        fail_msg: "Some plugin files are missing in /var/lib/jenkins/plugins"
+        success_msg: "All expected plugin files are present"

@@ -1,0 +1,6 @@
+- name: Prepare
+  hosts: all
+
+  roles:
+    - role: opstree_devops.java
+      java_version: openjdk-17-jdk

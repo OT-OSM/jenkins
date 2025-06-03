@@ -1,9 +1,10 @@
 ---
 galaxy_info:
   author: yashvinder.hooda@opstree.com
-  role_name: jenkins
   description: Install and configure Jenkins.
   company: "Opstree Solutions"
+  role_name: jenkins  # if absent directory name hosting role is used instead
+  namespace: opstree_devops 
   min_ansible_version: 2.3
   license: license (GPLv2)
   platforms:
@@ -20,5 +21,4 @@ galaxy_info:
   galaxy_tags:
     - jenkins
 
-dependencies:
-  - opstree_devops.java
+dependencies: []

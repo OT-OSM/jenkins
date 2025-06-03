@@ -1,33 +1,69 @@
 ---
-# Change this to -  `latest` to update Jenkins if a newer version is available.
+# Package Management
+# ------------------
+# Set to 'latest' to ensure Jenkins is always updated to the newest version.
 jenkins_package_state: present
-jenkins_connection_delay: 5
-jenkins_connection_retries: 60
+
+# Jenkins System Configuration
+# ----------------------------
 jenkins_home: /var/lib/jenkins
 jenkins_hostname: localhost
 jenkins_http_port: 8080
-jenkins_jar_location: /opt/jenkins-cli.jar
 jenkins_url_prefix: ""
 jenkins_java_options: "-Djenkins.install.runSetupWizard=false"
+
 jenkins_base_url: "http://{{ jenkins_hostname }}:{{ jenkins_http_port }}"
 jenkins_url: "{{ jenkins_base_url }}{{ jenkins_url_prefix }}"
+jenkins_jar_location: /opt/jenkins-cli.jar
 
-configuration_as_code: "disabled"
+# Jenkins Connection Retry Configuration (used during service startup or CLI usage)
+jenkins_connection_delay: 5
+jenkins_connection_retries: 60
+
+# Jenkins Plugins Configuration
+# -----------------------------
+# Use the 'name' and optional 'version' format. Version is optional; omit to install the latest.
 jenkins_plugins:
-  - git
-  - configuration-as-code
-  - plain-credentials
+  - name: git
+    version: 5.7.0
+  - name: configuration-as-code
+    version: 1947.v7d33fe23569c
+  # - name: plain-credentials
 
-jenkins_plugins_state: present
-jenkins_plugin_updates_expiration: 86400
-jenkins_plugin_timeout: 300
+jenkins_plugins_state: present  # Options: present, latest, absent
+jenkins_plugin_updates_expiration: 86400  # In seconds (default: 1 day)
+jenkins_plugin_timeout: 300  # Timeout in seconds for plugin installation
 jenkins_plugins_install_dependencies: true
 
+
+# Jenkins Service Configuration
+# -----------------------------
 jenkins_process_user: jenkins
 jenkins_process_group: "{{ jenkins_process_user }}"
 
-jenkins_init_changes:
-  - option: "JENKINS_ARGS"
-    value: "--prefix={{ jenkins_url_prefix }}"
-  - option: "{{ jenkins_java_options_env_var }}"
+
+# Systemd Configuration for Jenkins
+# ---------------------------------
+jenkins_systemd_configuration: /etc/systemd/system/jenkins.service.d/jenkins.conf
+jenkins_systemd_changes:
+  - option: "JENKINS_PREFIX"
+    value: "{{ jenkins_url_prefix }}"
+  - option: "JAVA_OPTS"
     value: "{{ jenkins_java_options }}"
+  - option: "JENKINS_HOME"
+    value: "{{ jenkins_home }}"
+  - option: "JENKINS_PORT"
+    value: "{{ jenkins_http_port }}"
+
+# User Configuration for Jenkins
+# ---------------------------------
+jenkins_admin_username: admin
+jenkins_admin_password: admin
+jenkins_admin_password_file: ""
+
+# Optional: Jenkins Configuration as Code (JCasC) Support
+# --------------------------------------------------------
+jenkins_enable_configuration_as_code: false  # Set to "true" if using JCasC
+jenkins_casc_config_path: "/var/lib/jenkins/casc_configs"
+jenkins_casc_file_name: "jenkins.yaml"
+jenkins_casc_source: "files/tools.yaml" 

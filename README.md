@@ -1,66 +1,69 @@
-Ansible Role: osm_jenkins
-=========
-An ansible role to install and configure jenkins server.
+Ansible Role: Jenkins
+=====================
+An Ansible role to **install** and **configure Jenkins**, including support for **Jenkins Configuration as Code (JCasC)** and **custom plugin management**.
 
-Version History
----------------
+🔧 Salient Features
+-------------------
+- ✅ Flexible Jenkins Installation
+  
+  Installs the latest Jenkins version available in system repositories by default, or a user-defined version when specified.
 
-|**Date**| **Version**| **Description**| **Changed By** |
-|----------|---------|---------------|-----------------|
-|**June '15, 19** | v.1.0 | Initial Draft | Sudipt Sharma |
-|**June '6, 20** | v.1.1 | Added support for managing global credential | Shivam Tomar |
+- 🔌 Dynamic Plugin Management
 
-Salient Features
-----------------
-* This role will check the system requirement(like memory and cpu cores) of remote host and if system requirements are satisfied then it will install latest jenkins version available in repository but if you want to install a specific veriosn you may pass it in variables.
-* This role is configuring jenkins global credentials as a code. To use this feature you just need to set variable as **configuration_as_code="enabled"**
+  Supports installation of Jenkins plugins through default variables, external YAML files (plugins_override.yml)—ideal for clean, modular, and environment-specific plugin management.
 
-Supported OS
+- 🧩 Jenkins Configuration as Code (JCasC)
+
+  Enables declarative configuration of Jenkins (users, tools, security, etc.) by simply toggling a variable and supplying a YAML config file.
+
+- ⚙️ Cross-Platform Compatibility
+
+  Compatible with both RHEL-based (e.g., RockyLinux) and Debian-based (e.g., Ubuntu) operating systems.
+
+🖥️ Supported OS
 ------------
-  * CentOS:7
-  * CentOS:6
-  * Ubuntu:bionic
-  * Ubuntu:xenial
+  * Rockylinux:9
+  * Ubuntu:24
+  * Ubuntu:22
 
-Dependencies
+📦 Dependencies
 ------------
-* Java {version 8 preferred}
+* Java {version 21 preferred}
 
-Requirements
+🔧 Requirements
 ------------
 * curl
 * libselinux-python
 * initscripts
 * apt-transport-https
 
-Role Variables
+⚙️ Role Variables
 --------------
 
 |**Variables**| **Default Values**| **Description**|
 |----------|---------|---------------|
-| memory | 1000 | total memory(in mb) that should be present at remote host|
-| core | 1 | total number of cores that should be present at remote host|
-| jenkins_admin_username | admin | Username of Admin |
-| jenkins_admin_password | admin | Password for Admin user|
-| jenkins_connection_delay | 5 | Wait for Jenkins to start up before proceeding |
-| jenkins_connection_retries | 60| Retry to execute task if it fails to start Jenkins |
-| jenkins_home | /var/lib/jenkins | Home Directory of jenkins|
-| jenkins_hostname | localhost| Hostname for Jenkins |
-| jenkins_http_port | 8080 | Port on which Jenkins runs|
-| jenkins_jar_location | /opt/jenkins-cli.jar | Location where jar file for jenkins stores|
-| jenkins_url_prefix | ""| URL prefix used in jenkins url|
-| jenkins_java_options | "-Djenkins.install.runSetupWizard=false" | |
-| jenkins_plugins| ['git']| Plugins add in Jenkins|
-| jenkins_plugins_state | present | Jenkins plugin state|
-| jenkins_plugin_updates_expiration | 86400 | Number of seconds after which a new copy of the update-center.json file is downloaded|
-| jenkins_plugin_timeout | 300 | Jenkins Server connection timeout in secs|
-| jenkins_plugins_install_dependencies | yes | Defines whether to install plugin dependencies. |
-| jenkins_process_user | jenkins | Jenkins process username|
-| jenkins_process_group | "{{ jenkins_process_user }}" | Jenkins process groupname|
-| configuration_as_code | "disabled"  | Update its value to "enabled" for managing global credential as a code | 
+| `jenkins_admin_username`            | `admin`                                       | Jenkins admin username                                                         |
+| `jenkins_admin_password`            | `admin`                                       | Jenkins admin password                                                         |
+| `jenkins_connection_delay`          | `5`                                           | Delay (in seconds) before connecting to Jenkins                                |
+| `jenkins_connection_retries`        | `60`                                          | Number of retries while waiting for Jenkins startup                            |
+| `jenkins_home`                      | `/var/lib/jenkins`                            | Jenkins home directory                                                          |
+| `jenkins_hostname`                  | `localhost`                                   | Jenkins hostname                                                                |
+| `jenkins_http_port`                 | `8080`                                        | Jenkins HTTP port                                                               |
+| `jenkins_jar_location`              | `/opt/jenkins-cli.jar`                        | Path to Jenkins CLI JAR                                                        |
+| `jenkins_url_prefix`                | `""`                                          | Optional Jenkins URL prefix                                                    |
+| `jenkins_java_options`             | `-Djenkins.install.runSetupWizard=false`      | Java options for Jenkins                                                       |
+| `jenkins_plugins`                   | `[{'name': 'git'}]`                           | List of Jenkins plugins to install                                             |
+| `jenkins_plugins_state`             | `present`                                     | State of plugins (`present` or `latest`)                                       |
+| `jenkins_plugin_updates_expiration`| `86400`                                       | Time (in seconds) before plugin update cache expires                           |
+| `jenkins_plugin_timeout`            | `300`                                         | Plugin installation timeout (in seconds)                                       |
+| `jenkins_plugins_install_dependencies` | `true`                                  | Install plugin dependencies automatically                                      |
+| `jenkins_process_user`              | `jenkins`                                     | Jenkins process owner user                                                     |
+| `jenkins_process_group`             | `{{ jenkins_process_user }}`                 | Jenkins process group                                                           |
+| `jenkins_enable_configuration_as_code` | `false`                                   | Set to `"true"` to enable JCasC configuration                                  |
+| `jenkins_casc_file_src`             | `files/jenkins.yaml`                          | Default JCasC YAML file location (can be overridden at runtime)                |
 
-Inventory
-----------
+📁 Inventory
+-------------
 An inventory should look like this:-
 ```ini
 [jenkinshost]                 
@@ -68,8 +71,8 @@ An inventory should look like this:-
 192.168.3.201    ansible_user=opstree 
 ```
 
-Example Playbook
-----------------
+🚀 Example Playbook
+--------------------
 
 * Here is an example playbook:-
 
@@ -83,18 +86,91 @@ Example Playbook
 ```
 * ansible-playbook site.yml
 
-**After the successful installation of jenkins, browse through the jenkins url and you would get your login page**
-![login](./media/login.png)
 
-Future Proposed Changes
+🛠️ Usage
+--------
+### 🔧 Full Jenkins Installation
+
+```shell
+ansible-playbook -i hosts site.yml
+```
+
+### 📦 Plugin Installation Only
+
+```shell
+ansible-playbook -i hosts site.yml --tags "jenkins_plugins"
+```
+Default plugins (from defaults/main.yml):
+```yaml
+jenkins_plugins:
+  - name: git
+    version: 5.7.0
+  - name: configuration-as-code
+    version: 1947.v7d33fe23569c
+```
+Override using a YAML file:
+```yaml
+# plugins_override.yml
+jenkins_plugins:
+  - name: git
+  - name: matrix-auth
+    version: 3.2
+```
+```bash
+ansible-playbook site.yml -tags "jenkins_plugins" -e @plugins_override.yml
+```
+**💡 Why use plugins_override.yml?**
+
+Keeps your plugin configurations clean, version-controlled, and environment-specific—ideal for CI/CD setups and collaboration.
+
+### 🧩 Jenkins Configuration as Code (JCasC)
+Enable JCasC:
+```yaml
+jenkins_enable_configuration_as_code: true
+```
+Run:
+
+Configure Jenkins with sample config from [files/](./files/): 
+
+- To create Credentials using JCasC:
+  ```shell
+  ansible-playbook -i hosts site.yml --tags "jenkins_JCasC" -e 'jenkins_casc_file_src=files/credentials.yml
+  ```
+- To set Global Tool Configurations using JCasC:
+  ```shell
+  ansible-playbook -i hosts site.yml --tags "jenkins_JCasC" -e 'jenkins_casc_file_src=files/tools.yml
+  ```
+Use a Custom JCasC YAML:
+
+```shell
+ansible-playbook -i hosts site.yml --tags "jenkins_JCasC" -e 'jenkins_casc_file_src=/path/to/custom.yaml'
+```
+**📄 Need Help Creating Your Own jenkins.yaml?**
+
+You can refer to official examples to build your own configuration:
+
+🔗 [JCasC Demo Repository](https://github.com/jenkinsci/configuration-as-code-plugin/tree/master/demos)
+
+Alternatively, use the provided examples under the files/ directory in this role.
+
+🧪 Molecule Test
+----------------
+To test this role using Molecule, refer to the [Molecule Test Documentation](./molecule/README.md).
+
+🔮 Future Enhancements
 -----------------------
+- Reverse proxy setup with NGINX
+- Jenkins agent installation and registration
 
-References
+🔗 References
 ----------
-- **[software](https://jenkins.io/)**
+- **[Java Official Website](https://www.java.com/en/)**
+- **[Molecule (Ansible Role Testing)](https://ansible.readthedocs.io/projects/molecule/)**
 
-Author Information
-------------------
+📬 Contact Information
+----------------------
+For questions, suggestions, or issues related to this role, please contact:
 
-- **[Yashvinder Hooda](mailto:yashvinder.hooda@opstree.com)*
-- **[Jeff Geerling](mailto:)*
+📧 Email: [opensource@opstree.com](mailto:opensource@opstree.com)
+
+🏢 Organization: [OpsTree Solutions](http://opstree.com)

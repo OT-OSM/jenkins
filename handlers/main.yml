@@ -1,7 +1,7 @@
 ---
-- name: configure default users
-  template:
-    src: basic-security.groovy
+- name: Configure default users
+  ansible.builtin.template:
+    src: basic-security.groovy.j2
     dest: "{{ jenkins_home }}/init.groovy.d/basic-security.groovy"
     owner: "{{ jenkins_process_user }}"
     group: "{{ jenkins_process_group }}"
@@ -9,4 +9,6 @@
   register: jenkins_users_config
 
 - name: Restart jenkins
-  service: name=jenkins state=restarted
+  ansible.builtin.service:
+    name: jenkins
+    state: restarted
