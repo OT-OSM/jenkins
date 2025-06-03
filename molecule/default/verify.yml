@@ -1,0 +1,32 @@
+---
+- name: Verify Jenkins installation
+  hosts: all
+
+  tasks:
+    - name: Check if Jenkins is running on port {{ jenkins_http_port }}
+      ansible.builtin.wait_for:
+        port: "{{ jenkins_http_port }}"
+        timeout: 10
+      register: jenkins_port_check
+
+    - name: Assert Jenkins port is open
+      ansible.builtin.assert:
+        that: jenkins_port_check.elapsed < 10
+        fail_msg: "Jenkins is not responding on port {{ jenkins_http_port }}"
+        success_msg: "Jenkins is listening on port {{ jenkins_http_port }}"
+
+    - name: Ensure Jenkins is running
+      ansible.builtin.uri:
+        url: "http://127.0.0.1:{{ jenkins_http_port }}/login"
+        status_code: 200
+
+    - name: Check if Jenkins CLI JAR exists
+      ansible.builtin.stat:
+        path: "{{ jenkins_jar_location }}"
+      register: cli_jar_file
+
+    - name: Assert Jenkins CLI JAR is present
+      ansible.builtin.assert:
+        that: cli_jar_file.stat.exists
+        fail_msg: "Jenkins CLI jar not found at {{ jenkins_jar_location }}"
+        success_msg: "Jenkins CLI jar is present"

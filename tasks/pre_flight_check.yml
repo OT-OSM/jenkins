@@ -1,8 +1,19 @@
 ---
-- name: Include system variables
-  include_vars: system.yml
+- name: pre_flight_check | Include system variables
+  ansible.builtin.include_vars: system.yml
 
-- name: Setting up of jenkins
-  fail:
+- name: pre_flight_check | Setting up of jenkins
+  ansible.builtin.fail:
     msg: "Remote server specification is not per the requirements mentioned, can't execute role"
-  when: ( ansible_memtotal_mb < 0.85*memory ) or ( ansible_processor_count < core )
+  when: ( ansible_memtotal_mb < 0.85*jenkins_required_memory ) or ( ansible_processor_count < jenkins_required_core )
+
+- name: pre_flight_check | Check if Java is installed
+  ansible.builtin.command: java -version
+  register: java_check
+  ignore_errors: true
+  changed_when: false
+
+- name: pre_flight_check | Fail if Java is not installed
+  ansible.builtin.fail:
+    msg: "Java is not installed on the target system."
+  when: java_check.rc != 0

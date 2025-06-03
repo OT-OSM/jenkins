@@ -1,34 +1,6 @@
 ---
-- name: Modify variables in init file
-  lineinfile:
-    dest: "{{ jenkins_init_file }}"
-    insertafter: '^{{ item.option }}='
-    regexp: '^{{ item.option }}=\"\${{ item.option }} '
-    line: '{{ item.option }}="${{ item.option }} {{ item.value }}"'
-    state: present
-  with_items:
-    - "{{ jenkins_init_changes }}"
-  register: jenkins_init_prefix
-  notify:
-    - Restart jenkins
-
-- name: Set the Jenkins home directory
-  lineinfile:
-    dest: "{{ jenkins_init_file }}"
-    regexp: '^JENKINS_HOME=.*'
-    line: 'JENKINS_HOME={{ jenkins_home }}'
-  register: jenkins_home_config
-
-- name: Set HTTP port in Jenkins config.
-  lineinfile:
-    backrefs: true
-    dest: "{{ jenkins_init_file }}"
-    regexp: '^{{ jenkins_http_port_param }}='
-    line: '{{ jenkins_http_port_param }}={{ jenkins_http_port }}'
-  register: jenkins_http_config
-
-- name: Ensure jenkins_home {{ jenkins_home }} exists
-  file:
+- name: settings | Ensure jenkins_home exists
+  ansible.builtin.file:
     path: "{{ jenkins_home }}"
     state: directory
     owner: jenkins
@@ -36,13 +8,48 @@
     mode: u+rwx
     follow: true
 
-- name: Create custom init scripts directory.
-  file:
+- name: settings | Create custom init scripts directory
+  ansible.builtin.file:
     path: "{{ jenkins_home }}/init.groovy.d"
     state: directory
     owner: "{{ jenkins_process_user }}"
     group: "{{ jenkins_process_group }}"
     mode: 0775
 
-- name: Trigger handlers immediately in case Jenkins was installed
-  meta: flush_handlers
+- name: settings | Ensure systemd override directory exists
+  ansible.builtin.file:
+    path: "{{ jenkins_systemd_configuration | dirname}}"
+    state: directory
+    mode: 0644
+
+- name: settings | Check if jenkins_systemd_file exists
+  ansible.builtin.stat:
+    path: "{{ jenkins_systemd_configuration }}"
+  register: jenkins_systemd_file_stat
+
+- name: settings | Populate jenkins_systemd_file with service tag
+  ansible.builtin.copy:
+    dest: "{{ jenkins_systemd_configuration }}"
+    content: "[Service]"
+  when: not jenkins_systemd_file_stat.stat.exists
+
+- name: settings | Modify custom jenkins service configuration
+  ansible.builtin.lineinfile:
+    dest: "{{ jenkins_systemd_configuration }}"
+    insertafter: '^Environment="{{ item.option }}='
+    regexp: '^Environment="{{ item.option }} '
+    line: 'Environment="{{ item.option }}={{ item.value }}"'
+    state: present
+    mode: 0644
+  with_items: "{{ jenkins_systemd_changes }}"
+  register: jenkins_systemd_changes
+
+- name: settings | Immediately restart Jenkins on systemd config changes
+  ansible.builtin.systemd:
+    name: jenkins
+    state: restarted
+    daemon_reload: true
+  when: jenkins_systemd_changes.changed
+
+- name: settings | Trigger handlers immediately in case Jenkins was installed
+  ansible.builtin.meta: flush_handlers

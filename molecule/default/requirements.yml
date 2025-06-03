@@ -1,6 +1,2 @@
 ---
 - name: opstree_devops.java
-  scm: git
-  src: git+https://github.com/OT-OSM/java.git
-  version: master
-...

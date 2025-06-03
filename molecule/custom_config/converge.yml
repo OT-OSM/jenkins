@@ -1,0 +1,16 @@
+---
+- name: Converge
+  hosts: all
+
+  roles:
+    - jenkins
+  
+  post_tasks:
+    - name: Include Jenkins role for plugin install
+      vars:
+        jenkins_plugins:
+          - name: pipeline-utility-steps
+            version: 2.19.0
+      ansible.builtin.include_role:
+        name: jenkins
+        tasks_from: plugins
