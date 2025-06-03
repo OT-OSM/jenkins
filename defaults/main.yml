@@ -64,3 +64,6 @@ jenkins_admin_password_file: ""
 # Optional: Jenkins Configuration as Code (JCasC) Support
 # --------------------------------------------------------
 jenkins_enable_configuration_as_code: false  # Set to "true" if using JCasC
+jenkins_casc_config_path: "/var/lib/jenkins/casc_configs"
+jenkins_casc_file_name: "jenkins.yaml"
+jenkins_casc_source: "files/tools.yaml" 

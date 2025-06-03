@@ -1,0 +1,35 @@
+---
+- name: casc_task | Ensure JCasC config directory exists
+  ansible.builtin.file:
+    path: "{{ jenkins_casc_config_path }}"
+    state: directory
+    owner: "{{ jenkins_process_user }}"
+    group: "{{ jenkins_process_group }}"
+    mode: '0755'
+  when: jenkins_enable_configuration_as_code
+  tags:
+   - jenkins_JCasC
+
+- name: casc_task | Copy JCasC config file
+  ansible.builtin.copy:
+    src: "{{ jenkins_casc_source }}"
+    dest: "{{ jenkins_casc_config_path }}/{{ jenkins_casc_file_name }}"
+    owner: "{{ jenkins_process_user }}"
+    group: "{{ jenkins_process_group }}"
+    mode: '0644'
+  when: jenkins_enable_configuration_as_code
+  notify: Restart jenkins
+  tags:
+   - jenkins_JCasC
+
+- name: casc_task | Set JCasC configuration path using CASC_JENKINS_CONFIG
+  ansible.builtin.lineinfile:
+    path: "{{ jenkins_systemd_configuration }}"
+    create: yes
+    mode: '0644'
+    regexp: '^Environment="CASC_JENKINS_CONFIG='
+    line: 'Environment="CASC_JENKINS_CONFIG={{ jenkins_casc_config_path }}/{{ jenkins_casc_file_name }}"'
+  notify:
+    - Restart jenkins
+  tags:
+   - jenkins_JCasC
