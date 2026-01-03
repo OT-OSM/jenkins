@@ -39,28 +39,34 @@
 - name: Ensure Jenkins is started and runs on startup.
   service: name=jenkins state=started enabled=yes
 
-- name: Wait for Jenkins to start up before proceeding.
-  command: "curl -D - --silent --max-time 5 {{ jenkins_url }}/cli/"
+# - name: Wait for Jenkins to start up before proceeding.
+#   command: "curl -D - --silent --max-time 5 {{ jenkins_url }}/cli/"
+#   args:
+#     warn: false
+#   register: result
+#   until:
+#     (result.stdout.find("403 Forbidden") != -1) or
+#     (result.stdout.find("200 OK") != -1) and
+#     (result.stdout.find("Please wait while") == -1)
+
+#   retries: "{{ jenkins_connection_retries }}"
+#   delay: "{{ jenkins_connection_delay }}"
+#   changed_when: false
+#   check_mode: false
+
+- name: Wait for Jenkins to be ready
+  uri:
+    url: "{{ jenkins_url }}/login"
+    method: GET
+    status_code: [200, 403]
+    return_content: no
   register: result
   retries: "{{ jenkins_connection_retries }}"
   delay: "{{ jenkins_connection_delay }}"
+  until: result.status in [200, 403]
   changed_when: false
-  check_mode: false
 
-- name: Debug the result variable
-  debug:
-    var: result
 
-- name: Wait for Jenkins to start up before proceeding (fixed conditional).
-  command: "curl -D - --silent --max-time 5 {{ jenkins_url }}/cli/"
-  register: result
-  until: 
-    - "(result.stdout.find('403 Forbidden') != -1) or (result.stdout.find('200 OK') != -1)"
-    - "(result.stdout.find('Please wait while') == -1)"
-  retries: "{{ jenkins_connection_retries }}"
-  delay: "{{ jenkins_connection_delay }}"
-  changed_when: false
-  check_mode: false
 
 - name: check if jenkins-cli jar file exists
   stat:
@@ -89,6 +95,3 @@
 - name: Including file for managing configuration as code
   include_tasks: configuration_as_code_task.yml
   when: configuration_as_code == "enabled"
-
-- include_tasks: configure_ec2_plugin.yml
-  when: configure_ec2_plugin == "yes"
