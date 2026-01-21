@@ -37,22 +37,10 @@
 
 # Make sure Jenkins starts, then configure Jenkins.
 - name: Ensure Jenkins is started and runs on startup.
-  service: name=jenkins state=started enabled=yes
-
-# - name: Wait for Jenkins to start up before proceeding.
-#   command: "curl -D - --silent --max-time 5 {{ jenkins_url }}/cli/"
-#   args:
-#     warn: false
-#   register: result
-#   until:
-#     (result.stdout.find("403 Forbidden") != -1) or
-#     (result.stdout.find("200 OK") != -1) and
-#     (result.stdout.find("Please wait while") == -1)
-
-#   retries: "{{ jenkins_connection_retries }}"
-#   delay: "{{ jenkins_connection_delay }}"
-#   changed_when: false
-#   check_mode: false
+  service:
+    name: jenkins
+    state: started
+    enabled: yes
 
 - name: Wait for Jenkins to be ready
   uri:
@@ -65,8 +53,6 @@
   delay: "{{ jenkins_connection_delay }}"
   until: result.status in [200, 403]
   changed_when: false
-
-
 
 - name: check if jenkins-cli jar file exists
   stat:
@@ -91,6 +77,11 @@
 
 # Update Jenkins and install configured plugins.
 - include_tasks: plugins.yml
+
+# 🔥 Configure EC2 plugin (dynamic agents)
+- name: Configure EC2 plugin
+  include_tasks: configure_ec2_plugin.yml
+  when: configure_ec2_plugin == "yes"
 
 - name: Including file for managing configuration as code
   include_tasks: configuration_as_code_task.yml

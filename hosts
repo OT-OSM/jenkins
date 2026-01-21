@@ -1,2 +1,2 @@
 [jenkins]
-3.91.235.196 ansible_user=ubuntu ansible_ssh_private_key_file=/Users/priyanshuyadav/Downloads/prjectcred/jenkins-test.pem
+184.73.47.251 ansible_user=ubuntu ansible_ssh_private_key_file=/Users/priyanshuyadav/Downloads/prjectcred/jenkins-test.pem
