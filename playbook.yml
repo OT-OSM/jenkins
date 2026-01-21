@@ -2,4 +2,4 @@
 - hosts: jenkins
   become: yes
   roles:
-    - role: /Users/priyanshuyadav/priyanshu-role/jenkins
+    - /opt/jenkins
