@@ -1,7 +1,24 @@
 ---
-jenkins_repo_url: deb https://pkg.jenkins.io/debian-stable binary/
-jenkins_repo_key_url: https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
-jenkins_pkg_url: https://pkg.jenkins.io/debian/binary
+# Jenkins channel: lts (recommended) or weekly
+jenkins_channel: "lts"
+
+# Jenkins apt repository (base URL only; "binary/" is added in the task)
+jenkins_repo_url: "https://pkg.jenkins.io/debian-stable"
+
+# Jenkins GPG signing key (2026 key – current)
+jenkins_repo_key_url: "https://pkg.jenkins.io/debian-stable/jenkins.io-2026.key"
+
+# Jenkins package base URL (used for .deb downloads)
+jenkins_pkg_url: "https://pkg.jenkins.io/debian-stable/binary"
+
+# Jenkins init / config file
 jenkins_init_file: /etc/default/jenkins
+
+# Jenkins HTTP port parameter name (used in /etc/default/jenkins)
 jenkins_http_port_param: HTTP_PORT
+
+# Jenkins Java options env var name
 jenkins_java_options_env_var: JAVA_ARGS
+
+# Jenkins package state
+jenkins_package_state: present

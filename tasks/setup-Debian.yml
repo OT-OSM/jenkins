@@ -1,27 +1,54 @@
 ---
-- name: Ensure dependencies are installed.
+# -------------------------------
+# 1) Base dependencies + Java
+# -------------------------------
+- name: Ensure base dependencies are installed.
   apt:
     name:
       - curl
+      - ca-certificates
+      - gnupg
       - apt-transport-https
+      - fontconfig
+      - openjdk-21-jre
     state: present
+    update_cache: true
 
-- name: Add Jenkins apt repository key.
-  apt_key:
+- name: Verify Java installation.
+  command: java -version
+  register: java_version_output
+  changed_when: false
+  failed_when: java_version_output.rc != 0
+
+# -------------------------------
+# 2) Jenkins repo key + repo
+# -------------------------------
+- name: Create keyrings directory.
+  file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: "0755"
+
+- name: Download Jenkins GPG key.
+  get_url:
     url: "{{ jenkins_repo_key_url }}"
-    state: present
+    dest: /etc/apt/keyrings/jenkins-keyring.asc
+    mode: "0644"
 
 - name: Add Jenkins apt repository.
   apt_repository:
-    repo: "{{ jenkins_repo_url }}"
+    repo: "deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc] {{ jenkins_repo_url }} binary/"
     state: present
     update_cache: true
-  when: jenkins_repo_url | length > 0
 
+# -------------------------------
+# 3) Optional: install specific Jenkins version (.deb)
+# -------------------------------
 - name: Download specific Jenkins version.
   get_url:
     url: "{{ jenkins_pkg_url }}/jenkins_{{ jenkins_version }}_all.deb"
     dest: "/tmp/jenkins_{{ jenkins_version }}_all.deb"
+    mode: "0644"
   when: jenkins_version is defined
 
 - name: Check if we downloaded a specific version of Jenkins.
@@ -37,8 +64,12 @@
   when: jenkins_version is defined and specific_version.stat.exists
   notify: configure default users
 
+# -------------------------------
+# 4) Default Jenkins install (repo-based)
+# -------------------------------
 - name: Ensure Jenkins is installed.
   apt:
     name: jenkins
     state: "{{ jenkins_package_state }}"
+  when: jenkins_version is not defined
   notify: configure default users
