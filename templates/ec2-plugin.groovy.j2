@@ -1,171 +1,96 @@
-import com.amazonaws.services.ec2.model.InstanceType
-import hudson.model.*
-import hudson.plugins.ec2.AmazonEC2Cloud
-import hudson.plugins.ec2.EC2Tag
-import hudson.plugins.ec2.SlaveTemplate
-import hudson.plugins.ec2.UnixData
+import hudson.model.Node
+import hudson.plugins.ec2.*
 import jenkins.model.Jenkins
-import hudson.plugins.ec2.HostKeyVerificationStrategyEnum
-import hudson.plugins.ec2.ConnectionStrategy
-import hudson.plugins.ec2.Tenancy
-import hudson.plugins.ec2.EbsEncryptRootVolume
 
-// ===============================
-// Slave template parameters
-// ===============================
-def slaveTemplateParameters = [
-  ami:                           '{{ ami_id }}',
-  associatePublicIp:             false,
-  spotConfig:                    null,
-  connectBySSHProcess:           false,
-  connectUsingPublicIp:          false,
-  customDeviceMapping:           '',
-  deleteRootOnTermination:       true,
-  description:                   '{{ template_description }}',
-  ebsOptimized:                  true,
-  iamInstanceProfile:            '{{ iam_instance_profile_arn }}',
-  idleTerminationMinutes:        {{ idle_temination_timeout }},
-  initScript:                    '',
-  instanceCapStr:                '{{ instance_cap }}',
-  javaPath:                      'java',
-  jvmopts:                       '',
-  labelString:                   '{{ label }}',
-  launchTimeoutStr:              '',
-  numExecutors:                  '{{ executors }}',
+def jenkins = Jenkins.get()
 
-  // 🔥 SSM MODE → no SSH
-  unixData:                      null,
-  remoteFS:                      '',
-  remoteAdmin:                   '{{ remote_admin }}',
-  tmpDir:                        '',
-  securityGroups:                ['{{ sg_id }}'],
-  stopOnTerminate:               false,
-  subnetId:                      '{{ subnet_id | trim }}',
-
-  tags:                          [
-                                  {% for key, value in tags.items() %}
-                                  new EC2Tag('{{ key }}', '{{ value }}'){{ "," if not loop.last }}
-                                  {% endfor %}
-                                 ],
-
-  type:                          '{{ instance_type }}',
-  useDedicatedTenancy:           false,
-  useEphemeralDevices:           false,
-  usePrivateDnsName:             false,
-
-  // 🔥 Java auto-install on slave
-  userData:                      '''#!/bin/bash
-set -e
-apt-get update -y
-apt-get install -y openjdk-17-jdk
-''',
-
-  zone:                          '',
-  metadataSupported:             true,
-  metadataEndpointEnabled:       true,
-  metadataTokensRequired:        true,
-  metadataHopsLimit:             1,
-
-  minimumNumberOfInstances:      {{ minimum_instances }},
-  minimumNumberOfSpareInstances: {{ minimum_spare }},
-  maxTotalUses:                  -1,
-  monitoring:                    false,
-  t2Unlimited:                   false,
-
-  connectionStrategy:            ConnectionStrategy.valueOf('PRIVATE_IP'),
-  hostKeyVerificationStrategy:   HostKeyVerificationStrategyEnum.valueOf('CHECK_NEW_HARD'),
-  tenancy:                       Tenancy.valueOf('Default'),
-  ebsEncryptRootVolume:          EbsEncryptRootVolume.valueOf('ENCRYPTED'),
-  nodeProperties:                null
+def tags = [
+  new EC2Tag("Name", "{{ tags.Name }}"),
+  new EC2Tag("Environment", "{{ tags.Environment }}"),
+  new EC2Tag("Owner", "{{ tags.Owner }}")
 ]
 
-// ===============================
-// Cloud parameters
-// ===============================
-def AmazonEC2CloudParameters = [
-  name:      '{{ cloud_name }}',
-  credentialsId:  '',
-  instanceCapStr: '{{ instance_cap }}',
-  privateKey: '',
-  region: '{{ region }}',
-  useInstanceProfileForCredentials: {{ use_instance_profile | string | lower }}
-]
-
-// ===============================
-// Build SlaveTemplate object
-// ===============================
-SlaveTemplate slaveTemplate = new SlaveTemplate(
-  slaveTemplateParameters.ami,
-  slaveTemplateParameters.zone,
-  slaveTemplateParameters.spotConfig,
-  slaveTemplateParameters.securityGroups,
-  slaveTemplateParameters.remoteFS,
-  InstanceType.fromValue(slaveTemplateParameters.type),
-  slaveTemplateParameters.ebsOptimized,
-  slaveTemplateParameters.labelString,
+def template = new SlaveTemplate(
+  "{{ ami_id }}",
+  "",
+  null,
+  "{{ sg_id }}",
+  "",
+  "{{ instance_type }}",
+  true,
+  "{{ label }}",
   Node.Mode.NORMAL,
-  slaveTemplateParameters.description,
-  slaveTemplateParameters.initScript,
-  slaveTemplateParameters.tmpDir,
-  slaveTemplateParameters.userData,
-  slaveTemplateParameters.numExecutors,
-  slaveTemplateParameters.remoteAdmin,
-  slaveTemplateParameters.unixData,
-  slaveTemplateParameters.javaPath,
-  slaveTemplateParameters.jvmopts,
-  slaveTemplateParameters.stopOnTerminate,
-  slaveTemplateParameters.subnetId,
-  slaveTemplateParameters.tags,
-  slaveTemplateParameters.idleTerminationMinutes,
-  slaveTemplateParameters.minimumNumberOfInstances,
-  slaveTemplateParameters.minimumNumberOfSpareInstances,
-  slaveTemplateParameters.instanceCapStr,
-  slaveTemplateParameters.iamInstanceProfile,
-  slaveTemplateParameters.deleteRootOnTermination,
-  slaveTemplateParameters.useEphemeralDevices,
-  slaveTemplateParameters.launchTimeoutStr,
-  slaveTemplateParameters.associatePublicIp,
-  slaveTemplateParameters.customDeviceMapping,
-  slaveTemplateParameters.connectBySSHProcess,
-  slaveTemplateParameters.monitoring,
-  slaveTemplateParameters.t2Unlimited,
-  slaveTemplateParameters.connectionStrategy,
-  slaveTemplateParameters.maxTotalUses,
-  slaveTemplateParameters.nodeProperties,
-  slaveTemplateParameters.hostKeyVerificationStrategy,
-  slaveTemplateParameters.tenancy,
-  slaveTemplateParameters.ebsEncryptRootVolume,
-  slaveTemplateParameters.metadataSupported,
-  slaveTemplateParameters.metadataEndpointEnabled,
-  slaveTemplateParameters.metadataTokensRequired,
-  slaveTemplateParameters.metadataHopsLimit
+  "{{ template_description }}",
+  "",
+  "",
+  """#!/bin/bash
+set -e
+
+echo "===== Update system ====="
+apt-get update -y || apt-get update -y --fix-missing
+
+echo "===== Install SSH server ====="
+apt-get install -y openssh-server
+
+echo "===== Enable & start SSH ====="
+systemctl enable ssh
+systemctl restart ssh
+
+echo "===== Install Java ====="
+apt-get install -y openjdk-17-jdk
+
+echo "===== SSH status ====="
+systemctl status ssh || true
+ss -lntp | grep :22 || true
+""",
+  "{{ executors }}",
+  "{{ remote_admin }}",
+  new UnixData(null, null, null, null, null),
+  "java",
+  "",
+  false,
+  "{{ subnet_id }}",
+  tags,
+  "{{ idle_termination_timeout }}",
+  {{ minimum_instances }},
+  {{ minimum_spare }},
+  "{{ instance_cap }}",
+  "{{ iam_instance_profile }}",
+  true,
+  false,
+  "",
+  AssociateIPStrategy.PRIVATE_IP,
+  "",
+  false,
+  false,
+  false,
+  ConnectionStrategy.PRIVATE_IP,
+  -1,
+  [],
+  HostKeyVerificationStrategyEnum.CHECK_NEW_HARD,
+  Tenancy.Default,
+  EbsEncryptRootVolume.DEFAULT,
+  true,
+  true,
+  1,
+  true,
+  false
 )
 
-// ===============================
-// Build AmazonEC2Cloud object
-// ===============================
-AmazonEC2Cloud amazonEC2Cloud = new AmazonEC2Cloud(
-  AmazonEC2CloudParameters.name,
-  AmazonEC2CloudParameters.useInstanceProfileForCredentials,
-  AmazonEC2CloudParameters.credentialsId,
-  AmazonEC2CloudParameters.region,
-  AmazonEC2CloudParameters.privateKey,
-  AmazonEC2CloudParameters.instanceCapStr,
-  [slaveTemplate],
-  '',
-  ''
+def cloud = new AmazonEC2Cloud(
+  "{{ cloud_name }}",
+  true,
+  "",
+  "{{ region }}",
+  "",
+  "{{ instance_cap }}",
+  [template],
+  "",
+  ""
 )
 
-// ===============================
-// Apply config into Jenkins
-// ===============================
-Jenkins jenkins = Jenkins.getInstance()
-
-// 🔥 Idempotent: remove old cloud with same name
-jenkins.clouds.removeAll { it.name == AmazonEC2CloudParameters.name }
-
-// add cloud configuration to Jenkins
-jenkins.clouds.add(amazonEC2Cloud)
-
-// save current Jenkins state to disk
+jenkins.clouds.removeAll { it.name == "{{ cloud_name }}" }
+jenkins.clouds.add(cloud)
 jenkins.save()
+
+println("✅ EC2 cloud {{ cloud_name }} configured successfully")

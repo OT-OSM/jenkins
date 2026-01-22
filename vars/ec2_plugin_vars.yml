@@ -1,30 +1,27 @@
----
-cloud_name: "ec2-dynamic-cloud"
-region: "us-east-1"
+cloud_name: ec2-dynamic-cloud
+region: us-east-1
 
-ami_id: "ami-dummy"
-template_description: "On-demand Jenkins EC2 agent"
+ami_id: ami-01b9f1e7dc427266e
+template_description: On-demand Jenkins EC2 agent
 
-iam_instance_profile_arn: "dummy-profile"
+iam_instance_profile: opstree-ssm-profile
 
-label: "ec2-agent"
+idle_termination_timeout: 30
+
+label: ec2-agent
 executors: 1
-remote_admin: "ubuntu"
+remote_admin: ubuntu
 
-# ❌ dummy placeholders (never used at runtime)
-subnet_id: "dummy-subnet"
-sg_id: "dummy-sg"
+subnet_id: subnet-0e0699ed3da0ec911
+sg_id: sg-00c3edcb1512ff6d5
 
-instance_type: "t4g.small"
+instance_type: t4g.small
 
 minimum_instances: 0
 minimum_spare: 0
-idle_temination_timeout: 30
 instance_cap: 5
 
-use_instance_profile: true
-
 tags:
-  Name: "jenkins-ec2-agent"
-  Environment: "dummy"
-  Owner: "dummy"
+  Name: jenkins-ec2-agent
+  Environment: testing
+  Owner: central-team
