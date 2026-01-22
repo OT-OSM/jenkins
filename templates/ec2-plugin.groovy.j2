@@ -5,57 +5,43 @@ import jenkins.model.Jenkins
 def jenkins = Jenkins.get()
 
 def tags = [
-  new EC2Tag("Name", "{{ tags.Name }}"),
-  new EC2Tag("Environment", "{{ tags.Environment }}"),
-  new EC2Tag("Owner", "{{ tags.Owner }}")
+{% for k,v in tags.items() %}
+  new EC2Tag("{{ k }}", "{{ v }}"),
+{% endfor %}
 ]
 
 def template = new SlaveTemplate(
-  "{{ ami_id }}",
-  "",
-  null,
-  "{{ sg_id }}",
-  "",
-  "{{ instance_type }}",
-  true,
-  "{{ label }}",
-  Node.Mode.NORMAL,
-  "{{ template_description }}",
-  "",
-  "",
+  "{{ ami_id }}",                       // AMI
+  "",                                   // availabilityZone
+  null,                                 // spotConfig
+  "{{ security_group_id }}",            // security group
+  "/home/{{ remote_admin }}",           // remoteFS
+  "{{ instance_type }}",                // instanceType
+  true,                                 // ebsOptimized
+  "{{ label }}",                        // label
+  Node.Mode.NORMAL,                     // mode
+  "{{ template_description }}",         // description
+  "",                                   // initScript
+  "",                                   // tmpDir
   """#!/bin/bash
-set -e
-
-echo "===== Update system ====="
-apt-get update -y || apt-get update -y --fix-missing
-
-echo "===== Install SSH server ====="
-apt-get install -y openssh-server
-
-echo "===== Enable & start SSH ====="
+apt-get update -y
+apt-get install -y openssh-server openjdk-17-jdk
 systemctl enable ssh
-systemctl restart ssh
-
-echo "===== Install Java ====="
-apt-get install -y openjdk-17-jdk
-
-echo "===== SSH status ====="
-systemctl status ssh || true
-ss -lntp | grep :22 || true
+systemctl start ssh
 """,
-  "{{ executors }}",
-  "{{ remote_admin }}",
-  new UnixData(null, null, null, null, null),
-  "java",
-  "",
-  false,
-  "{{ subnet_id }}",
+  "{{ executors }}",                    // numExecutors
+  "{{ remote_admin }}",                 // remoteUser
+  new UnixData("/home/{{ remote_admin }}", null, null, null, null),
+  "java",                               // javaPath
+  "",                                   // jvmOptions
+  false,                                // stopOnTerminate
+  "{{ subnet_id }}",                    // subnetId
   tags,
-  "{{ idle_termination_timeout }}",
+  "{{ idle_termination_timeout }}",    // idleTerminationMinutes
   {{ minimum_instances }},
   {{ minimum_spare }},
   "{{ instance_cap }}",
-  "{{ iam_instance_profile }}",
+  "{{ iam_instance_profile_arn }}",    // ✅ MUST be ARN
   true,
   false,
   "",
@@ -67,7 +53,7 @@ ss -lntp | grep :22 || true
   ConnectionStrategy.PRIVATE_IP,
   -1,
   [],
-  HostKeyVerificationStrategyEnum.CHECK_NEW_HARD,
+  HostKeyVerificationStrategyEnum.ACCEPT_NEW,
   Tenancy.Default,
   EbsEncryptRootVolume.DEFAULT,
   true,

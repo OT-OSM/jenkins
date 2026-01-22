@@ -1,8 +1,24 @@
-- name: Render EC2 plugin groovy from template
+- name: Load EC2 plugin vars
+  include_vars:
+    file: vars/ec2_plugin_vars.yml
+
+- name: Render SSH credential groovy
+  template:
+    src: ssh-credential.groovy.j2
+    dest: /var/lib/jenkins/init.groovy.d/98-ssh-credential.groovy
+    owner: jenkins
+    group: jenkins
+    mode: '0644'
+
+- name: Render EC2 cloud groovy
   template:
     src: ec2-plugin.groovy.j2
     dest: /var/lib/jenkins/init.groovy.d/99-ec2-cloud.groovy
     owner: jenkins
     group: jenkins
     mode: '0644'
-  notify: Restart Jenkins
+
+- name: Restart Jenkins
+  service:
+    name: jenkins
+    state: restarted

@@ -1,27 +1,34 @@
-cloud_name: ec2-dynamic-cloud
-region: us-east-1
+cloud_name: "ec2-dynamic-cloud"
+region: "us-east-1"
 
-ami_id: ami-01b9f1e7dc427266e
-template_description: On-demand Jenkins EC2 agent
+ami_id: "ami-064dafe5269669acd"
+template_description: "On-demand Jenkins EC2 agent"
 
-iam_instance_profile: opstree-ssm-profile
+iam_instance_profile_arn: "arn:aws:iam::384961893048:instance-profile/opstree-ssm-jekins"
 
-idle_termination_timeout: 30
+idle_termination_timeout: "30"
 
-label: ec2-agent
-executors: 1
-remote_admin: ubuntu
+label: "ec2-agent"
+executors: "1"
+remote_admin: "ubuntu"
 
-subnet_id: subnet-0e0699ed3da0ec911
-sg_id: sg-00c3edcb1512ff6d5
+subnet_id: "subnet-0429e3325e4d0f733"
+security_group_id: "sg-0d2a2cb67cba5e0e9"
 
-instance_type: t4g.small
+instance_type: "t4g.small"
 
 minimum_instances: 0
 minimum_spare: 0
-instance_cap: 5
+instance_cap: "5"
+ssh_credential_id: "ec2-ssh-key" 
 
 tags:
-  Name: jenkins-ec2-agent
-  Environment: testing
-  Owner: central-team
+  Name: "jenkins-ec2-agent"
+  Environment: "testing"
+  Owner: "central-team"
+
+ssh_private_key: |
+  -----BEGIN RSA PRIVATE KEY-----
+  XYZ
+  -----END RSA PRIVATE KEY-----
+
