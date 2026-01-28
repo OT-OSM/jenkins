@@ -4,7 +4,7 @@ region: "us-east-1"
 ami_id: "ami-064dafe5269669acd"
 template_description: "On-demand Jenkins EC2 agent"
 
-iam_instance_profile_arn: "arn:aws:iam::384961893048:instance-profile/opstree-ssm-jekins"
+iam_instance_profile_arn: "arn:aws:iam::384961893048:instance-profile/opstree-jenkins-instance-profile"
 
 idle_termination_timeout: "30"
 
