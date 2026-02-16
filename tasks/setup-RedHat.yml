@@ -14,7 +14,6 @@
 - name: Ensure dependencies are installed.
   package:
     name:
-      - curl
       - fontconfig
     state: present
 
