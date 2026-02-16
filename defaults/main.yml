@@ -13,7 +13,7 @@ jenkins_base_url: "http://{{ jenkins_hostname }}:{{ jenkins_http_port }}"
 jenkins_url: "{{ jenkins_base_url }}{{ jenkins_url_prefix }}"
 
 configuration_as_code: "disabled"
-configure_ec2_plugin: "yes"
+configure_ec2_plugin: "no"
 jenkins_plugins:
   - git
   - configuration-as-code
@@ -29,6 +29,15 @@ jenkins_plugins:
   - ws-cleanup
   - amazon-ec2
   - ec2
+
+  # Blue Ocean
+  - blueocean
+  - pipeline-groovy-lib
+  - workflow-durable-task-step
+  - workflow-basic-steps
+
+
+
 
 jenkins_plugins_state: present
 jenkins_plugin_updates_expiration: 86400
