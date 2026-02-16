@@ -1,5 +1,6 @@
 ---
-- hosts: jenkins
+- hosts: localhost
+  connection: local
   become: yes
   roles:
     - /opt/jenkins
