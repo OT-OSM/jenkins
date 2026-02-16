@@ -3,8 +3,7 @@
   package:
     name:
       - curl
-      - libselinux-python
-      - initscripts
+      - fontconfig
     state: present
 
 - name: Ensure Jenkins repo is installed.
@@ -42,3 +41,17 @@
     name: jenkins
     state: "{{ jenkins_package_state }}"
   notify: configure default users
+
+- name: Ensure Jenkins systemd override directory exists
+  file:
+    path: "{{ jenkins_systemd_override_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  when: jenkins_systemd_override_dir is defined
+
+- name: Reload systemd daemon
+  systemd:
+    daemon_reload: yes
+  when: jenkins_systemd_override_dir is defined

@@ -1,7 +1,13 @@
 ---
+# Jenkins repo & GPG key (LTS – stable channel, 2023+ key)
 jenkins_repo_url: https://pkg.jenkins.io/redhat-stable/jenkins.repo
-jenkins_repo_key_url: https://pkg.jenkins.io/redhat-stable/jenkins.io.key
-jenkins_pkg_url: https://pkg.jenkins.io/redhat
-jenkins_init_file: /etc/sysconfig/jenkins
-jenkins_http_port_param: JENKINS_PORT
-jenkins_java_options_env_var: JENKINS_JAVA_OPTIONS
+jenkins_repo_key_url: https://pkg.jenkins.io/redhat-stable/jenkins.io-2026.key
+
+jenkins_pkg_url: https://pkg.jenkins.io/redhat-stable
+
+# Amazon Linux 2023 / RHEL 9+ use systemd; override file lives here
+jenkins_init_file: /usr/lib/systemd/system/jenkins.service
+jenkins_systemd_override_dir: /etc/systemd/system/jenkins.service.d
+
+jenkins_http_port_param: Environment="JENKINS_PORT"
+jenkins_java_options_env_var: Environment="JAVA_OPTS"
