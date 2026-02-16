@@ -1,4 +1,16 @@
 ---
+# ── Java 17 Installation (Amazon Corretto for AL2023) ──────────────
+- name: Install Java 17 (Amazon Corretto)
+  package:
+    name: java-17-amazon-corretto-devel
+    state: present
+
+- name: Verify Java installation
+  command: java -version
+  register: java_check
+  changed_when: false
+
+# ── Jenkins Dependencies ───────────────────────────────────────────
 - name: Ensure dependencies are installed.
   package:
     name:
